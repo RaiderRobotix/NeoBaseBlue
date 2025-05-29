@@ -1,5 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
     
 
@@ -7,32 +11,58 @@ public class Constants {
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double stickDeadband = 0.0;
+    
+    public static final double kTrackWidth = Units.inchesToMeters(18.5);
+    public static final double kWheelBase = Units.inchesToMeters(20);
+    public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
+        new Translation2d(kWheelBase / 2, kTrackWidth / 2),
+        new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+        new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
+        new Translation2d(-kWheelBase / 2, -kTrackWidth / 2)
+    );
+    public static final class ModuleConstants{
+        public static final int kDrivingMotorPinionTeeth = 14;
 
+        public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(4);
+        public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
+
+        public static final double kDrivingMotorReduction = (45.0*22) / (kDrivingMotorPinionTeeth * 15);
+        public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
+    }
 
     public static final class Mod0 {
         
-        public static final int drivermotorID = 10;
-        public static final int anglemotorID = 20;
+        public static final int drivermotorID0 = 0;
+        public static final int anglemotorID0 = 0;
         //public static final int camcoderID = "insert id";
+        public static final double offset0 = 0;
+
     }
 
     public static final class Mod1 {
         
-        public static final int drivermotorID = 11;
-        public static final int anglemotorID = 21;
+        public static final int drivermotorID1 = 0;
+        public static final int anglemotorID1 = 0;
         //public static final int camcoderID = "insert id";
+        public static final double offset1 = 0;
     }
 
     public static final class Mod2 {
         
-        public static final int drivermotorID = 12;
-        public static final int anglemotorID = 22;
+        public static final int drivermotorID2 = 0;
+        public static final int anglemotorID2 = 0;
         //public static final int camcoderID = "insert id";
+        public static final double offset2 = 0;
     }
     public static final class Mod3 {
         
-        public static final int drivermotorID = 13;
-        public static final int anglemotorID = 23;
+        public static final int drivermotorID3 = 0;
+        public static final int anglemotorID3 = 0;
         //public static final int camcoderID = "insert id";
+        public static final double offset3 = 0;
+    }
+    public static final class NeoMotorConstants {
+        public static final double kFreeSpeedRpm = 5676;
     }
 }
