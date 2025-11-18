@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -24,6 +25,8 @@ public class Robot extends TimedRobot {
   private final XboxController m_controller = new XboxController(0);
   private final Timer m_timer = new Timer();
 
+  private RobotContainer m_RobotContainer;
+
   /** Called once at the beginning of the robot program. */
   public Robot() {
     SendableRegistry.addChild(m_robotDrive, m_leftDrive);
@@ -33,7 +36,13 @@ public class Robot extends TimedRobot {
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
     m_rightDrive.setInverted(true);
+    m_RobotContainer = new RobotContainer();
   }
+
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+  }
+
 
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
