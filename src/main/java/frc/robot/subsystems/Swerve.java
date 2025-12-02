@@ -17,24 +17,28 @@ public class Swerve extends SubsystemBase{
     private final MAXSwerveModule SwerveMod0 = new MAXSwerveModule(
         Constants.Mod0.drivermotorID0,
         Constants.Mod0.anglemotorID0,
+        Constants.Mod0.camcoderID,
         Constants.Mod0.offset0
     );
 
     private final MAXSwerveModule SwerveMod1 = new MAXSwerveModule(
         Constants.Mod1.drivermotorID1,
         Constants.Mod1.anglemotorID1,
+        Constants.Mod1.camcoderID,
         Constants.Mod1.offset1
     );
 
     private final MAXSwerveModule SwerveMod2 = new MAXSwerveModule(
         Constants.Mod2.drivermotorID2,
         Constants.Mod2.anglemotorID2,
+        Constants.Mod2.camcoderID,
         Constants.Mod2.offset2
     );
 
     private final MAXSwerveModule SwerveMod3 = new MAXSwerveModule(
         Constants.Mod3.drivermotorID3,
         Constants.Mod3.anglemotorID3,
+        Constants.Mod3.camcoderID,
         Constants.Mod3.offset3
     );
 
@@ -65,7 +69,11 @@ public class Swerve extends SubsystemBase{
                 SwerveMod2.getPosition(),
                 SwerveMod3.getPosition()
             }
+
         );
+        SmartDashboard.putNumber("Mod 0 Cancoder", SwerveMod0.getCanCoder().getDegrees());
+        SmartDashboard.putNumber("Mod 0 Encoder", SwerveMod0.getState().angle.getDegrees());
+        
         
     }
 
@@ -125,7 +133,7 @@ public class Swerve extends SubsystemBase{
         SwerveMod3.setDesiredState(swerveModuleStates[3]);
         */
 
-        System.out.println(rotDelivered);
+        //System.out.println(swerveModuleStates[0].angle.getDegrees());
     }
 
     public void zeroHeading() {
