@@ -3,9 +3,12 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import frc.lib.util.swerveUtil.COTSNeoSwerveConstants;
+import frc.lib.util.swerveUtil.COTSNeoSwerveConstants.driveGearRatios;
 
 public class Constants {
-    
+    public static final COTSNeoSwerveConstants chosenModule = COTSNeoSwerveConstants.SDSMK4i(driveGearRatios.SDSMK4i_L2);
+    public static final double angleGearRatio = chosenModule.angleGearRatio;
 
     public static final double  kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second

@@ -73,7 +73,13 @@ public class Swerve extends SubsystemBase{
         );
         SmartDashboard.putNumber("Mod 0 Cancoder", SwerveMod0.getCanCoder().getDegrees());
         SmartDashboard.putNumber("Mod 0 Encoder", SwerveMod0.getState().angle.getDegrees());
-        
+        SmartDashboard.putNumber("Mod 1 Cancoder", SwerveMod1.getCanCoder().getDegrees());
+        SmartDashboard.putNumber("Mod 1 Encoder", SwerveMod1.getState().angle.getDegrees());
+        SmartDashboard.putNumber("Mod 2 Cancoder", SwerveMod2.getCanCoder().getDegrees());
+        SmartDashboard.putNumber("Mod 2 Encoder", SwerveMod2.getState().angle.getDegrees());
+        SmartDashboard.putNumber("Mod 3 Cancoder", SwerveMod3.getCanCoder().getDegrees());
+        SmartDashboard.putNumber("Mod 3 Encoder", SwerveMod3.getState().angle.getDegrees());
+        SmartDashboard.putNumber("Mod 0 RotVal", SwerveMod0.getRotVal());
         
     }
 

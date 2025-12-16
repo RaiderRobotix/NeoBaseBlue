@@ -32,13 +32,16 @@ public class Configs {
                 turningConfig
                         .idleMode(IdleMode.kBrake)
                         .smartCurrentLimit(40);
+                turningConfig.encoder
+                        .positionConversionFactor(360/Constants.angleGearRatio)
+                        .velocityConversionFactor(Constants.angleGearRatio/60);
                 turningConfig.absoluteEncoder
                         .inverted(true)
                         .positionConversionFactor(turningFactor)
                         .velocityConversionFactor(turningFactor / 60.0);
                 turningConfig.closedLoop
-                        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-                        .pid(1, 0, 0)
+                        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                        .pid(0.3, 0, 0)
                         .outputRange(-1, 1)
                         .positionWrappingEnabled(true)
                         .positionWrappingInputRange(0, turningFactor);
