@@ -94,7 +94,7 @@ public class MAXSwerveModule {
     public void setDesiredState(SwerveModuleState desiredState) {
         desiredState = CTREModuleState.optimize(desiredState, getState().angle);
         
-        SmartDashboard.putNumber("Desired Angle", desiredState.angle.getDegrees());
+        
         
         
         SwerveModuleState correctedDesiredState = new SwerveModuleState();
@@ -103,11 +103,12 @@ public class MAXSwerveModule {
 
         correctedDesiredState.optimize(new Rotation2d(angleEncoder.getPosition().getValueAsDouble()));
         
-        
+        SmartDashboard.putNumber("Desired Angle", correctedDesiredState.angle.getDegrees());
         
 
-        setSpeed(correctedDesiredState, true);
+        
         setAngle(correctedDesiredState);
+        setSpeed(correctedDesiredState, true);
 
         m_desiredState = desiredState;
         
@@ -134,10 +135,10 @@ public class MAXSwerveModule {
         SparkClosedLoopController turncontroller = m_turningSpark.getClosedLoopController();
         
         
-        rotval = desiredState.angle.getRotations();
+        rotval = desiredState.angle.getDegrees();
         
         turncontroller.setReference(rotval, ControlType.kPosition);
-        
+            
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop)

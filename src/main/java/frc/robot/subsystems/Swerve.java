@@ -104,6 +104,10 @@ public class Swerve extends SubsystemBase{
         double ySpeedDelivered = ySpeed * Constants.kMaxSpeedMetersPerSecond;
         double rotDelivered = rot * Constants.kMaxAngularSpeed;
         
+        SmartDashboard.putNumber("Left Joy X Axis", xSpeed);
+        SmartDashboard.putNumber("Left Joy Y Axis", ySpeed);
+        SmartDashboard.putNumber("RightJoystick Right Axis", rot);
+
         SwerveModuleState[] swerveModuleStates =
             Constants.kDriveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
