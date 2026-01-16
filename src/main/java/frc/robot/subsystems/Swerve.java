@@ -8,8 +8,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -42,27 +43,29 @@ public class Swerve extends SubsystemBase{
         Constants.Mod3.offset3
     );
 
-    private final ADIS16470_IMU m_gyro = new ADIS16470_IMU();
+    public AHRS m_gyro;
 
-    SwerveDriveOdometry m_Odometry = new SwerveDriveOdometry(
-        Constants.kDriveKinematics, 
-        Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
-        new SwerveModulePosition[] {
-            SwerveMod0.getPosition(),
-            SwerveMod1.getPosition(),
-            SwerveMod2.getPosition(),
-            SwerveMod3.getPosition()
-        }
-    );
+    SwerveDriveOdometry m_Odometry;
+    
 
     public Swerve(){
-
+        m_gyro = new AHRS(NavXComType.kUSB1);
+        m_Odometry = new SwerveDriveOdometry(
+            Constants.kDriveKinematics, 
+            getYaw(),
+            new SwerveModulePosition[] {
+                SwerveMod0.getPosition(),
+                SwerveMod1.getPosition(),
+                SwerveMod2.getPosition(),
+                SwerveMod3.getPosition()
+            }
+        );
     }
 
     @Override
     public void periodic(){
         m_Odometry.update(
-            Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
+            getYaw(),
             new SwerveModulePosition[] {
                 SwerveMod0.getPosition(),
                 SwerveMod1.getPosition(),
@@ -83,13 +86,17 @@ public class Swerve extends SubsystemBase{
         
     }
 
+    public Rotation2d getYaw(){
+        return (false) ? Rotation2d.fromDegrees(360 - m_gyro.getYaw()) : Rotation2d.fromDegrees(m_gyro.getYaw());
+    }
+
     public Pose2d getPose(){
         return m_Odometry.getPoseMeters();
     }
 
     public void resetOdometry(Pose2d pose){
         m_Odometry.resetPosition(
-            Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)),
+            getYaw(),
             new SwerveModulePosition[] {
                 SwerveMod0.getPosition(),
                 SwerveMod1.getPosition(),
@@ -114,7 +121,7 @@ public class Swerve extends SubsystemBase{
                     xSpeedDelivered,
                     ySpeedDelivered,
                     rotDelivered,
-                    Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ))
+                    getYaw()
                 )
                 : new ChassisSpeeds(
                         xSpeedDelivered,
@@ -151,7 +158,7 @@ public class Swerve extends SubsystemBase{
     }
 
     public double getHeading() {
-        return Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)).getDegrees();
+        return getYaw().getDegrees();
     }
     
 

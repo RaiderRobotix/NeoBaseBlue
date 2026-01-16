@@ -92,23 +92,26 @@ public class MAXSwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState) {
+        /*
+        SmartDashboard.putNumber("Desired Angle Check 4", desiredState.angle.getDegrees());
         desiredState = CTREModuleState.optimize(desiredState, getState().angle);
         
-        
+        SmartDashboard.putNumber("Desired Angle Check 3", desiredState.angle.getDegrees());
         
         
         SwerveModuleState correctedDesiredState = new SwerveModuleState();
         correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
         correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromDegrees(m_chassisAngularOffset));
+        SmartDashboard.putNumber("Desired Angle Check 2", correctedDesiredState.angle.getDegrees());
+        correctedDesiredState = CTREModuleState.optimize(correctedDesiredState, getState().angle);
+        
+        SmartDashboard.putNumber("Desired Angle Check 1", correctedDesiredState.angle.getDegrees());
+        
 
-        correctedDesiredState.optimize(new Rotation2d(angleEncoder.getPosition().getValueAsDouble()));
-        
-        SmartDashboard.putNumber("Desired Angle", correctedDesiredState.angle.getDegrees());
-        
+        */
 
-        
-        setAngle(correctedDesiredState);
-        setSpeed(correctedDesiredState, true);
+        setAngle(desiredState);
+        setSpeed(desiredState, true);
 
         m_desiredState = desiredState;
         
@@ -135,7 +138,7 @@ public class MAXSwerveModule {
         SparkClosedLoopController turncontroller = m_turningSpark.getClosedLoopController();
         
         
-        rotval = desiredState.angle.getDegrees();
+        rotval = desiredState.angle.getRotations();
         
         turncontroller.setReference(rotval, ControlType.kPosition);
             
