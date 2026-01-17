@@ -109,6 +109,7 @@ public class MAXSwerveModule {
         
 
         */
+        SmartDashboard.putNumber("Desired Angle", desiredState.angle.getDegrees())
 
         setAngle(desiredState);
         setSpeed(desiredState, true);

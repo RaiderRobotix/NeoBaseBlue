@@ -30,7 +30,7 @@ public class Configs {
                         .outputRange(-1, 1);
                 
                 turningConfig
-                        .idleMode(IdleMode.kCoast)
+                        .idleMode(IdleMode.kBrake)
                         .smartCurrentLimit(40)
                         .inverted(true);
                 turningConfig.encoder
@@ -42,7 +42,7 @@ public class Configs {
                         .velocityConversionFactor(turningFactor / 60.0);
                 turningConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(10.3, 0, 10)
+                        .pid(10, 0, 0)
                         .outputRange(-1, 1)
                         .positionWrappingEnabled(true)
                         .positionWrappingInputRange(0, turningFactor);
