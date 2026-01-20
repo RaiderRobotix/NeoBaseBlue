@@ -39,6 +39,9 @@ public class MAXSwerveModule {
 
     private RelativeEncoder m_drivingEncoder;
     private RelativeEncoder m_turningEncoder;
+
+    private final SparkClosedLoopController m_drivingClosedLoopController;
+    private final SparkClosedLoopController m_turningClosedLoopController;
     
     private CANcoder angleEncoder;
 
@@ -51,17 +54,23 @@ public class MAXSwerveModule {
         m_drivingSpark = new SparkMax(drivingCANId, MotorType.kBrushless);
         m_turningSpark = new SparkMax(turningCANId, MotorType.kBrushless);
         
+        m_drivingClosedLoopController = m_drivingSpark.getClosedLoopController();
+        m_turningClosedLoopController = m_turningSpark.getClosedLoopController();
+
+        angleEncoder = new CANcoder(cancoderId);
+        configEncoders();
 
         m_turningSpark.configure(Configs.MAXSwerveModule.turningConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         m_drivingSpark.configure(Configs.MAXSwerveModule.drivingConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     
 
-        angleEncoder = new CANcoder(cancoderId);
+
+        
        
         m_chassisAngularOffset = chassisAngularOffset;
         
-
-        configEncoders();
+        resetToAbsolute();
+        
     }
 
     private void configEncoders(){
@@ -71,7 +80,7 @@ public class MAXSwerveModule {
         m_drivingEncoder.setPosition(0);
 
         m_turningEncoder = m_turningSpark.getEncoder();
-        resetToAbsolute();
+        
     }
 
     public void resetToAbsolute(){
@@ -109,7 +118,7 @@ public class MAXSwerveModule {
         
 
         */
-        SmartDashboard.putNumber("Desired Angle", desiredState.angle.getDegrees())
+        SmartDashboard.putNumber("Desired Angle", desiredState.angle.getDegrees());
 
         setAngle(desiredState);
         setSpeed(desiredState, true);
@@ -136,12 +145,12 @@ public class MAXSwerveModule {
        }
         
          
-        SparkClosedLoopController turncontroller = m_turningSpark.getClosedLoopController();
+        
         
         
         rotval = desiredState.angle.getRotations();
         
-        turncontroller.setReference(rotval, ControlType.kPosition);
+        m_turningClosedLoopController.setReference(rotval, ControlType.kPosition);
             
     }
 
@@ -157,9 +166,9 @@ public class MAXSwerveModule {
  
         
         
-        SparkClosedLoopController drivecontroller = m_drivingSpark.getClosedLoopController();
         
-        drivecontroller.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity);
+        
+        m_drivingClosedLoopController.setReference(desiredState.speedMetersPerSecond, ControlType.kVelocity);
         
     }
 

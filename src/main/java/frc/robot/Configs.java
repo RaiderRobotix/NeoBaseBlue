@@ -31,18 +31,18 @@ public class Configs {
                 
                 turningConfig
                         .idleMode(IdleMode.kBrake)
-                        .smartCurrentLimit(40)
+                        .smartCurrentLimit(20)
                         .inverted(true);
                 turningConfig.encoder
-                        .positionConversionFactor(360/Constants.angleGearRatio)
-                        .velocityConversionFactor(Constants.angleGearRatio/60);
+                        .positionConversionFactor((Math.PI / 2) / Constants.angleGearRatio)
+                        .velocityConversionFactor((Math.PI / 2) / Constants.angleGearRatio/60);
                 turningConfig.absoluteEncoder
                         .inverted(true)
                         .positionConversionFactor(turningFactor)
                         .velocityConversionFactor(turningFactor / 60.0);
                 turningConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                        .pid(10, 0, 0)
+                        .pid(1, 0, 0)
                         .outputRange(-1, 1)
                         .positionWrappingEnabled(true)
                         .positionWrappingInputRange(0, turningFactor);

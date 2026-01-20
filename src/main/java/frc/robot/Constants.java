@@ -39,7 +39,7 @@ public class Constants {
         public static final int drivermotorID0 = 10;
         public static final int anglemotorID0 = 20;
         public static final int camcoderID = 0;
-        public static final double offset0 = 0;
+        public static final double offset0 = 64.248047;
 
     }
 
@@ -48,7 +48,7 @@ public class Constants {
         public static final int drivermotorID1 = 11;
         public static final int anglemotorID1 = 21;
         public static final int camcoderID = 1;
-        public static final double offset1 = 0;
+        public static final double offset1 = 146.337891;
     }
 
     public static final class Mod2 {
@@ -56,14 +56,14 @@ public class Constants {
         public static final int drivermotorID2 = 12;
         public static final int anglemotorID2 = 22;
         public static final int camcoderID = 2;
-        public static final double offset2 = 0;
+        public static final double offset2 = -38.935547;
     }
     public static final class Mod3 {
         
         public static final int drivermotorID3 = 13;
         public static final int anglemotorID3 = 23;
         public static final int camcoderID = 3;
-        public static final double offset3 = 0;
+        public static final double offset3 = -137.900391;
     }
     public static final class NeoMotorConstants {
         public static final double kFreeSpeedRpm = 5676;
