@@ -148,7 +148,7 @@ public class MAXSwerveModule {
         
         
         
-        rotval = desiredState.angle.getRotations();
+        rotval = desiredState.angle.getRadians();
         
         m_turningClosedLoopController.setReference(rotval, ControlType.kPosition);
             
