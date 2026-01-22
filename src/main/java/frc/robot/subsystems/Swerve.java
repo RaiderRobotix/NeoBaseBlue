@@ -1,165 +1,181 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
-
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-public class Swerve extends SubsystemBase{
-    private final MAXSwerveModule SwerveMod0 = new MAXSwerveModule(
-        Constants.Mod0.drivermotorID0,
-        Constants.Mod0.anglemotorID0,
-        Constants.Mod0.camcoderID,
-        Constants.Mod0.offset0
-    );
 
-    private final MAXSwerveModule SwerveMod1 = new MAXSwerveModule(
-        Constants.Mod1.drivermotorID1,
-        Constants.Mod1.anglemotorID1,
-        Constants.Mod1.camcoderID,
-        Constants.Mod1.offset1
-    );
+public class Swerve extends SubsystemBase {
 
-    private final MAXSwerveModule SwerveMod2 = new MAXSwerveModule(
-        Constants.Mod2.drivermotorID2,
-        Constants.Mod2.anglemotorID2,
-        Constants.Mod2.camcoderID,
-        Constants.Mod2.offset2
-    );
-
-    private final MAXSwerveModule SwerveMod3 = new MAXSwerveModule(
-        Constants.Mod3.drivermotorID3,
-        Constants.Mod3.anglemotorID3,
-        Constants.Mod3.camcoderID,
-        Constants.Mod3.offset3
-    );
+    private final MAXSwerveModule[] swerveMods = {
+            new MAXSwerveModule(
+                    Constants.Mod0.drivermotorID0,
+                    Constants.Mod0.anglemotorID0,
+                    Constants.Mod0.camcoderID,
+                    Constants.Mod0.offset0),
+            new MAXSwerveModule(Constants.Mod1.drivermotorID1,
+                    Constants.Mod1.anglemotorID1,
+                    Constants.Mod1.camcoderID,
+                    Constants.Mod1.offset1),
+            new MAXSwerveModule(Constants.Mod2.drivermotorID2,
+                    Constants.Mod2.anglemotorID2,
+                    Constants.Mod2.camcoderID,
+                    Constants.Mod2.offset2),
+            new MAXSwerveModule(Constants.Mod3.drivermotorID3,
+                    Constants.Mod3.anglemotorID3,
+                    Constants.Mod3.camcoderID,
+                    Constants.Mod3.offset3)
+    };
 
     public AHRS m_gyro;
+    private final SwerveDrivePoseEstimator poseEstimator;
 
-    SwerveDriveOdometry m_Odometry;
-    
-
-    public Swerve(){
+    public Swerve() {
         m_gyro = new AHRS(NavXComType.kUSB1);
-        m_Odometry = new SwerveDriveOdometry(
-            Constants.kDriveKinematics, 
-            getYaw(),
-            new SwerveModulePosition[] {
-                SwerveMod0.getPosition(),
-                SwerveMod1.getPosition(),
-                SwerveMod2.getPosition(),
-                SwerveMod3.getPosition()
-            }
-        );
+
+        // Define the standard deviations for the pose estimator, which determine how
+        // fast the pose
+        // estimate converges to the vision measurement. This should depend on the
+        // vision measurement
+        // noise
+        // and how many or how frequently vision measurements are applied to the pose
+        // estimator.
+        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+        var visionStdDevs = VecBuilder.fill(1, 1, 1);
+        poseEstimator = new SwerveDrivePoseEstimator(
+                Constants.kDriveKinematics,
+                getYaw(),
+                getModulePositions(),
+                new Pose2d(),
+                stateStdDevs,
+                visionStdDevs);
     }
 
     @Override
-    public void periodic(){
-        m_Odometry.update(
-            getYaw(),
-            new SwerveModulePosition[] {
-                SwerveMod0.getPosition(),
-                SwerveMod1.getPosition(),
-                SwerveMod2.getPosition(),
-                SwerveMod3.getPosition()
-            }
-
-        );
-        SmartDashboard.putNumber("Mod 0 Cancoder", SwerveMod0.getCanCoder().getDegrees());
-        SmartDashboard.putNumber("Mod 0 Encoder", SwerveMod0.getState().angle.getDegrees());
-        SmartDashboard.putNumber("Mod 1 Cancoder", SwerveMod1.getCanCoder().getDegrees());
-        SmartDashboard.putNumber("Mod 1 Encoder", SwerveMod1.getState().angle.getDegrees());
-        SmartDashboard.putNumber("Mod 2 Cancoder", SwerveMod2.getCanCoder().getDegrees());
-        SmartDashboard.putNumber("Mod 2 Encoder", SwerveMod2.getState().angle.getDegrees());
-        SmartDashboard.putNumber("Mod 3 Cancoder", SwerveMod3.getCanCoder().getDegrees());
-        SmartDashboard.putNumber("Mod 3 Encoder", SwerveMod3.getState().angle.getDegrees());
-        SmartDashboard.putNumber("Mod 0 RotVal", SwerveMod0.getRotVal());
-        
+    public void periodic() {
+        // Update the pose estimator with the latest gyro heading and module positions
+        poseEstimator.update(getYaw(), getModulePositions());
+        logToDashboard();
     }
 
-    public Rotation2d getYaw(){
-        return (false) ? Rotation2d.fromDegrees(360 - m_gyro.getYaw()) : Rotation2d.fromDegrees(m_gyro.getYaw());
+    private void logToDashboard() {
+        String table = "Drive/";
+        Pose2d pose = getPose();
+        SmartDashboard.putNumber(table + "X", pose.getX());
+        SmartDashboard.putNumber(table + "Y", pose.getY());
+        SmartDashboard.putNumber(table + "Heading", pose.getRotation().getDegrees());
     }
 
-    public Pose2d getPose(){
-        return m_Odometry.getPoseMeters();
-    }
-
-    public void resetOdometry(Pose2d pose){
-        m_Odometry.resetPosition(
-            getYaw(),
-            new SwerveModulePosition[] {
-                SwerveMod0.getPosition(),
-                SwerveMod1.getPosition(),
-                SwerveMod2.getPosition(),
-                SwerveMod3.getPosition()
-            },
-            pose);
-    }
-
-    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative){
+    /**
+     * Method to drive the robot using joystick info.
+     *
+     * @param xSpeed        Speed in the x direction (forward).
+     * @param ySpeed        Speed in the y direction (sideways).
+     * @param rot           Angular rate of rotation.
+     * @param fieldRelative Whether the provided x and y speeds are relative to the
+     *                      field.
+     */
+    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
         double xSpeedDelivered = xSpeed * Constants.kMaxSpeedMetersPerSecond;
         double ySpeedDelivered = ySpeed * Constants.kMaxSpeedMetersPerSecond;
         double rotDelivered = rot * Constants.kMaxAngularSpeed;
-        
-        SmartDashboard.putNumber("Left Joy X Axis", xSpeed);
-        SmartDashboard.putNumber("Left Joy Y Axis", ySpeed);
-        SmartDashboard.putNumber("RightJoystick Right Axis", rot);
 
-        SwerveModuleState[] swerveModuleStates =
-            Constants.kDriveKinematics.toSwerveModuleStates(
+        SwerveModuleState[] swerveModuleStates = Constants.kDriveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeedDelivered,
-                    ySpeedDelivered,
-                    rotDelivered,
-                    getYaw()
-                )
-                : new ChassisSpeeds(
                         xSpeedDelivered,
                         ySpeedDelivered,
-                        rotDelivered
-                    )
-                );
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.kMaxSpeedMetersPerSecond);
+                        rotDelivered,
+                        getHeading())
+                        : new ChassisSpeeds(
+                                xSpeedDelivered,
+                                ySpeedDelivered,
+                                rotDelivered));
 
-    SwerveMod0.setDesiredState(swerveModuleStates[0]);
-    SwerveMod1.setDesiredState(swerveModuleStates[1]);
-    SwerveMod2.setDesiredState(swerveModuleStates[2]);
-    SwerveMod3.setDesiredState(swerveModuleStates[3]);
-
-        /*
-        var swerveModuleStates = Constants.kDriveKinematics.toSwerveModuleStates(
-            fieldRelative  
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, 
-                    Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
-                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            swerveModuleStates, Constants.kMaxSpeedMetersPerSecond);
-        SwerveMod0.setDesiredState(swerveModuleStates[0]);
-        SwerveMod1.setDesiredState(swerveModuleStates[1]);
-        SwerveMod2.setDesiredState(swerveModuleStates[2]);
-        SwerveMod3.setDesiredState(swerveModuleStates[3]);
-        */
-
-        //System.out.println(swerveModuleStates[0].angle.getDegrees());
+        setModuleStates(swerveModuleStates);
     }
 
-    public void zeroHeading() {
-        m_gyro.reset();
+    /**
+     * Get the SwerveModulePosition of each swerve module (position, angle). The
+     * returned array order
+     * matches the kinematics module order.
+     */
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+                swerveMods[0].getPosition(),
+                swerveMods[1].getPosition(),
+                swerveMods[2].getPosition(),
+                swerveMods[3].getPosition()
+        };
     }
 
-    public double getHeading() {
-        return getYaw().getDegrees();
+    /**
+     * Command the swerve modules to the desired states. Velocities exceeding the
+     * maximum speed will
+     * be desaturated (while preserving the ratios between modules).
+     */
+    public void setModuleStates(
+            SwerveModuleState[] desiredStates) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.kMaxSpeedMetersPerSecond);
+        for (int i = 0; i < swerveMods.length; i++) {
+            swerveMods[i].setDesiredState(desiredStates[i]);
+        }
     }
-    
 
+    public Pose2d getPose() {
+        return poseEstimator.getEstimatedPosition();
+    }
+
+    /**
+     * Reset the estimated pose of the swerve drive on the field.
+     *
+     * @param pose         New robot pose.
+     * @param resetSimPose If the simulated robot pose should also be reset. This
+     *                     effectively
+     *                     teleports the robot and should only be used during the
+     *                     setup of the simulation world.
+     */
+    public void resetPose(Pose2d pose, boolean resetSimPose) {
+        poseEstimator.resetPosition(getYaw(), getModulePositions(), pose);
+    }
+
+    /**
+     * See {@link SwerveDrivePoseEstimator#addVisionMeasurement(Pose2d, double)}.
+     */
+    public void addVisionMeasurement(Pose2d visionMeasurement, double timestampSeconds) {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds);
+    }
+
+    /**
+     * See
+     * {@link SwerveDrivePoseEstimator#addVisionMeasurement(Pose2d, double, Matrix)}.
+     */
+    public void addVisionMeasurement(
+            Pose2d visionMeasurement, double timestampSeconds, Matrix<N3, N1> stdDevs) {
+        poseEstimator.addVisionMeasurement(visionMeasurement, timestampSeconds, stdDevs);
+    }
+
+    /** Raw gyro yaw (this may not match the field heading!). */
+    public Rotation2d getYaw() {
+        return m_gyro.getRotation2d();
+    }
+
+    /** The heading of the swerve drive's estimated pose on the field. */
+    public Rotation2d getHeading() {
+        return getPose().getRotation();
+
+    }
 }
