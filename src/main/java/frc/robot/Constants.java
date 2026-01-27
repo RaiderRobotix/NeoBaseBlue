@@ -14,9 +14,11 @@ public class Constants {
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double stickDeadband = 0.1;
+
+    public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
     
-    public static final double kTrackWidth = Units.inchesToMeters(18.5);
-    public static final double kWheelBase = Units.inchesToMeters(20);
+    public static final double kTrackWidth = Units.inchesToMeters(19);
+    public static final double kWheelBase = Units.inchesToMeters(20.75);
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
@@ -39,7 +41,7 @@ public class Constants {
         public static final int drivermotorID0 = 10;
         public static final int anglemotorID0 = 20;
         public static final int camcoderID = 0;
-        public static final double offset0 = 0;
+        public static final double offset0 = 1.098330;
 
     }
 
@@ -47,23 +49,23 @@ public class Constants {
         
         public static final int drivermotorID1 = 11;
         public static final int anglemotorID1 = 21;
-        public static final int camcoderID = 1;
-        public static final double offset1 = 0;
+        public static final int camcoderID1 = 1;
+        public static final double offset1 = 2.558680;
     }
 
     public static final class Mod2 {
         
         public static final int drivermotorID2 = 12;
         public static final int anglemotorID2 = 22;
-        public static final int camcoderID = 2;
-        public static final double offset2 = 0;
+        public static final int camcoderID2 = 2;
+        public static final double offset2 = -0.720971;
     }
     public static final class Mod3 {
         
         public static final int drivermotorID3 = 13;
         public static final int anglemotorID3 = 23;
-        public static final int camcoderID = 3;
-        public static final double offset3 = 0;
+        public static final int camcoderID3 = 3;
+        public static final double offset3 = -2.416020;
     }
     public static final class NeoMotorConstants {
         public static final double kFreeSpeedRpm = 5676;

@@ -1,8 +1,17 @@
 package frc.robot;
 
+
+
+
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -17,6 +26,8 @@ private final Joystick operator = new Joystick(1);
 private final int translationAxis = XboxController.Axis.kLeftY.value;
 private final int strafeAxis = XboxController.Axis.kLeftX.value;
 private final int rotationAxis = XboxController.Axis.kRightX.value;
+
+private final JoystickButton zeroGyro = new JoystickButton(controller, XboxController.Button.kY.value);
 
 
 
@@ -40,11 +51,15 @@ public RobotContainer() {
     
     s_swerve.setDefaultCommand(new RunCommand(
         () -> s_swerve.drive(
-            -controller.getRawAxis(translationAxis),
-            -controller.getRawAxis(strafeAxis),
+            controller.getRawAxis(translationAxis),
+            controller.getRawAxis(strafeAxis),
             -controller.getRawAxis(rotationAxis),
             true),
         s_swerve));
+
+
+
+    configureButtonBindings();
     
         
 
@@ -72,4 +87,7 @@ private void configureDriverControls() {
 
 }
 
+private void configureButtonBindings() {
+    zeroGyro.onTrue(new InstantCommand(() -> s_swerve.zeroHeading()));
+}
 }

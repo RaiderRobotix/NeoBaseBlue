@@ -34,12 +34,8 @@ public class Configs {
                         .smartCurrentLimit(20)
                         .inverted(true);
                 turningConfig.encoder
-                        .positionConversionFactor(((1.95) * Math.PI) / Constants.angleGearRatio)
-                        .velocityConversionFactor((Math.PI / 2) / Constants.angleGearRatio/60);
-                turningConfig.absoluteEncoder
-                        .inverted(true)
-                        .positionConversionFactor(turningFactor)
-                        .velocityConversionFactor(turningFactor / 60.0);
+                        .positionConversionFactor((2 * Math.PI ) / Constants.angleGearRatio)
+                        .velocityConversionFactor((2 * Math.PI) / Constants.angleGearRatio/60);
                 turningConfig.closedLoop
                         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
                         .pid(1, 0, 0)
